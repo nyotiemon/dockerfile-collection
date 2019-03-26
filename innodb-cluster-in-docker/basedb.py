@@ -181,12 +181,11 @@ class MySqlDriver(object):
         Args:
             query (str): the statement to execute
             args (tuple): arguments for the where clause
-            fetch_all (bool): Set to True if function should return retrieve all the records from cursors and return it. Set to False to return cursor.
             first_try (bool): flag for retry query
             conn (db.connections.Connection): connection object to use
 
         Returns:
-            resultant rows if fetch_all is True else returns the cursor. It is up to calling method to close the cursor
+            array of tuple from the query result
         """
         if conn is None:
             conn = self.__get_connection()
@@ -365,7 +364,7 @@ class MySqlDriver(object):
             conn = self.__test_and_reconnect(conn)
 
             if fname == 'select':
-                return self.select(query=param1, args=param2, fetch_all=param3, first_try=False, conn=conn)
+                return self.select(query=param1, args=param2, first_try=False, conn=conn)
             elif fname == 'select_one':
                 return self.select_one(query=param1, args=param2, first_try=False, conn=conn)
             elif fname == 'insert_get_id':
