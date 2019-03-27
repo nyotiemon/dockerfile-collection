@@ -58,6 +58,10 @@ cluster.addInstance('nyot@node3', {memberWeight:80})
 
 sudo docker run -d --name=mrouter --net=groupnet -e MYSQL_HOST=node1 -e MYSQL_PORT=3306 -e MYSQL_USER=nyot -e MYSQL_PASSWORD=1234 -e MYSQL_INNODB_NUM_MEMBERS=3 mysql/mysql-router
 
+sudo docker exec -it node1 mysql -unyot -p1234 \
+  -e "CREATE DATABASE ngetes;" \
+  -e "CREATE TABLE testing(data_time DATETIME PRIMARY KEY);"
+
 sudo docker build --tag=pymytest .
 sudo docker run -it --name=pytest --net=groupnet pymytest
 
