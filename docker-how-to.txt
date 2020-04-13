@@ -1,0 +1,21 @@
+https://docker-curriculum.com/#docker-run
+https://docs.docker.com/get-started/
+https://github.com/docker/labs/blob/master/beginner/chapters/webapps.md
+
+docker exec -it -u tony 7d876ec273d2 /bin/bash
+
+-it => INTERACTIVELY
+-d => in background (as daemon)
+-p => forward port to container
+-d => detached mode. can close terminal and keep the container running
+
+docker run --> Starting a docker. target = image, result = container
+docker exec --> Operate existing container. target = container
+docer start --> Start a stopped container
+docker [ps | container ls] --> list containers. -a = including stopped ones
+docker rm --> remove container
+[docker rm $(docker ps -a -q -f status=exited) | docker container prune]
+docker rim --> remove image
+docker stop --> stop a detached container
+
+docker port --> list down the port used

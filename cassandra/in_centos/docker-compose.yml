@@ -1,0 +1,20 @@
+version: '3.3'
+services:
+    cassandra-centos:
+      image: icasdb:latest
+      user: $UID:$GID
+      working_dir: $HOME
+      restart: always
+      container_name: casdb
+      network_mode: "host"
+      volumes:
+        - /etc/group:/etc/group:ro
+        - /etc/passwd:/etc/passwd:ro
+        - /etc/shadow:/etc/shadow:ro
+        - /etc/sudoers.d:/etc/sudoers.d:ro
+
+# need to export UID and GID first as in this tut: https://medium.com/faun/set-current-host-user-for-docker-container-4e521cef9ffc
+# export UID=$(id -u)
+# export GID=$(id -g)
+# docker-compose -f docker-compose.yml up cassandra-centos -d
+# docker exec --user nyot -it casdb zsh

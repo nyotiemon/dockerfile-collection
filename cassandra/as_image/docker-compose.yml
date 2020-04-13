@@ -1,0 +1,14 @@
+version: '3.3'
+services:
+    cassandra-3-11:
+      image: cassandra:3.11
+      restart: always
+      container_name: casdb
+      network_mode: "host"
+      ports:
+        - '7000:7000'
+        - '9042:9042'
+      volumes:
+        - /home/nyot/HES/docker/cassandra/as_image/vol:/var/lib/cassandra
+        - /home/nyot/HES/docker/cassandra/cql-files:/home/cql-files
+        - /home/nyot/HES/docker/cassandra/configs:/etc/cassandra

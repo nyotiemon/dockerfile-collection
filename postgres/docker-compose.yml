@@ -1,0 +1,19 @@
+version: '3.3'
+services:
+    postgre-10-2:
+      image: sameersbn/postgresql:10-2
+      restart: always
+      container_name: pgdb
+      network_mode: "host"
+      ports:
+        - "5432:5432"
+      environment:
+        - DEBUG=true
+        - PG_TRUST_LOCALNET=true
+        - PG_PASSWORD=specialdogcomingby
+        - DB_EXTENSION="uuid-ossp"
+        - DB_USER=ardomus
+        - DB_PASS=randomdogwalkedby
+        - DB_NAME=hes
+      volumes:
+        - /home/nyot/HES/docker/postgre/vol:/var/lib/postgresql

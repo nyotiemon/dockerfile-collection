@@ -1,0 +1,35 @@
+FROM centos:7 
+ MAINTAINER "Nyoto" <nyoto.arif@ardomusnet.com> 
+ ARG USER=nyot 
+ ARG NODE_IP=192.168.10.116 
+ RUN yum -y update && yum -y install epel-release && yum -y install python-pip cmake make vim nc git 
+ RUN yum -y install build-essential python-devel sudo 
+ RUN yum -y install zsh wget java-1.8.0-openjdk 
+ RUN chsh -s /bin/zsh 
+ RUN sh -c "$(wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)" 
+ ENV SHELL "/bin/zsh" 
+ RUN adduser ${USER} 
+ USER ${USER} 
+ ENV SHELL "/bin/zsh" 
+ WORKDIR /home/${USER}/ 
+ RUN git clone https://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh 
+ RUN cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc 
+ USER root 
+ COPY ./cassandra.repo /etc/yum.repos.d/ 
+ RUN yum -y install cassandra 
+ RUN chown -R ${USER}: /var/lib/cassandra 
+ RUN chown -R ${USER}: /var/log/cassandra 
+ RUN chown -R ${USER}: /etc/cassandra 
+ RUN chmod u+w /var/lib/cassandra /var/log/cassandra /etc/cassandra 
+ RUN echo JVM_OPTS=\"\$JVM_OPTS -Djava.rmi.server.hostname=127.0.0.1\" >> /etc/cassandra/default.conf/cassandra-env.sh 
+ RUN echo LOCAL_JMX=no >> /etc/cassandra/default.conf/cassandra-env.sh 
+ RUN mkdir -p /home/${USER}/hes-init/ 
+ COPY ./temp_cas_env.sh /home/${USER}/hes-init/ 
+ RUN cat /home/${USER}/hes-init/temp_cas_env.sh >> /etc/cassandra/default.conf/cassandra-env.sh 
+ COPY ./temp_cas.yaml /home/${USER}/hes-init/ 
+ RUN cat /home/${USER}/hes-init/temp_cas.yaml >> /etc/cassandra/conf/cassandra.yaml 
+ COPY ./hes_init.cql /home/${USER}/hes-init/ 
+ COPY ./hes_init.sh /home/${USER}/hes-init/ 
+ RUN chown -R ${USER}: /home/${USER}/hes-init 
+ RUN chmod 777 -R /home/${USER}/hes-init/ 
+ CMD ["cassandra", "-f"]

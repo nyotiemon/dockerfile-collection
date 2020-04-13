@@ -1,3 +1,4 @@
+# ------------------------------- 1
 sudo docker pull mysql/mysql-server
 sudo docker pull mysql/mysql-router
 sudo docker pull python
@@ -16,8 +17,13 @@ do sudo docker run -d --name=node$N --net=groupnet --hostname=node$N \
   --master-info-repository='TABLE' \
   --relay-log-info-repository='TABLE' \
   --plugin-load='group_replication.so' \
+  --collation-server='utf8mb4_unicode_ci' \
+  --max-connections=2000 \
   --relay-log-recovery='ON' \
   --group-replication-start-on-boot='OFF' \
+  --group-replication-single-primary-mode='ON' \
+  --group-replication-enforce-update-everywhere-checks='OFF' \
+  --group-replication-recovery-get-public-key='ON' \
   --group-replication-group-name='aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee' \
   --group-replication-local-address="node$N:33061" \
   --group-replication-group-seeds='node1:33061,node2:33061,node3:33061' \
@@ -46,6 +52,9 @@ sudo docker exec -it node3 mysql -uroot -p1234 \
   -e "FLUSH PRIVILEGES;" \
   -e "RESET MASTER;"
 
+# ------------------------------- 2 UPDATE my.cnf value
+
+# ------------------------------- 3 manual
 sudo docker exec -it node1 /bin/bash
 mysqlsh
 shell.connect('nyot@node1')
@@ -56,8 +65,10 @@ var cluster = dba.createCluster('TESTMGR', {memberWeight:100})
 cluster.addInstance('nyot@node2', {memberWeight:90})
 cluster.addInstance('nyot@node3', {memberWeight:80})
 
+# ------------------------------- 4 
 sudo docker run -d --name=mrouter --net=groupnet -e MYSQL_HOST=node1 -e MYSQL_PORT=3306 -e MYSQL_USER=nyot -e MYSQL_PASSWORD=1234 -e MYSQL_INNODB_NUM_MEMBERS=3 mysql/mysql-router
 
+# ------------------------------- 5 optional
 sudo docker exec -it node1 mysql -unyot -p1234 \
   -e "CREATE DATABASE ngetes;" \
   -e "CREATE TABLE testing(data_time DATETIME PRIMARY KEY);"
