@@ -1,0 +1,37 @@
+version: '3'
+
+networks:
+    rep-net:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.0.0.0/24
+
+services:
+  ts1:
+    image: timescale-replication:latest
+    env_file:
+        - primary.env
+    environment:
+        REPLICATION_SUBNET: '172.0.0.0/24'
+        TS_TUNE_MEMORY: 1GB
+        TS_TUNE_NUM_CPUS: 1
+        NO_TS_TUNE: 'true'
+    networks:
+        - rep-net
+    ports:
+        - 5432:5432
+
+  ts2:
+    image: timescale-replication:latest
+    env_file:
+        - replica.env
+    environment:
+        TS_TUNE_MEMORY: 1GB
+        TS_TUNE_NUM_CPUS: 1
+        NO_TS_TUNE: 'true'
+    networks:
+        - rep-net
+    ports:
+        - 5433:5432
