@@ -9,8 +9,8 @@ psql -U postgres -c "SET password_encryption = 'scram-sha-256'; CREATE ROLE $REP
 cat >> ${PGDATA}/postgresql.conf <<EOF
 listen_addresses= '*'
 wal_level = replica
-max_wal_senders = 2
-max_replication_slots = 2
+max_wal_senders = 3
+max_replication_slots = 3
 synchronous_commit = ${SYNCHRONOUS_COMMIT}
 EOF
 
@@ -27,14 +27,21 @@ fi
 if  [[ -z $REPLICATION_SUBNET ]]; then
     REPLICATION_SUBNET=$(getent hosts ${REPLICATE_TO} | awk '{ print $1 }')/32
 fi
-
 cat >> ${PGDATA}/pg_hba.conf <<EOF
 host     replication     ${REPLICA_POSTGRES_USER}   ${REPLICATION_SUBNET}       scram-sha-256
+EOF
+
+if  [[ -z $REPLICATION_SUBNET_2 ]]; then
+    REPLICATION_SUBNET_2=$(getent hosts ${REPLICATE_TO_2} | awk '{ print $1 }')/32
+fi
+cat >> ${PGDATA}/pg_hba.conf <<EOF
+host     replication     ${REPLICA_POSTGRES_USER}   ${REPLICATION_SUBNET_2}       scram-sha-256
 EOF
 
 # Restart postgres and add replication slot
 pg_ctl -D ${PGDATA} -m fast -w restart
 psql -U postgres -c "SELECT * FROM pg_create_physical_replication_slot('${REPLICA_NAME}_slot');"
+psql -U postgres -c "SELECT * FROM pg_create_physical_replication_slot('${REPLICA_NAME_2}_slot');"
 
 # CONFIGURE REPLICA
 else

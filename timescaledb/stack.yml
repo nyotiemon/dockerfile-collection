@@ -26,7 +26,7 @@ services:
   ts2:
     image: timescale-replication:latest
     env_file:
-        - replica.env
+        - replica1.env
     environment:
         TS_TUNE_MEMORY: 1GB
         TS_TUNE_NUM_CPUS: 1
@@ -35,3 +35,16 @@ services:
         - rep-net
     ports:
         - 5433:5432
+
+  ts3:
+    image: timescale-replication:latest
+    env_file:
+        - replica2.env
+    environment:
+        TS_TUNE_MEMORY: 1GB
+        TS_TUNE_NUM_CPUS: 1
+        NO_TS_TUNE: 'true'
+    networks:
+        - rep-net
+    ports:
+        - 5434:5432
