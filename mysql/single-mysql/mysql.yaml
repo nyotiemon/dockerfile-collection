@@ -1,0 +1,17 @@
+version: '3.3'
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: "hes"
+      MYSQL_USER: "nyot"
+      MYSQL_PASSWORD: "010203"
+      MYSQL_ROOT_PASSWORD: "010203"
+    ports:
+      - '3309:3306'
+    expose:
+      - 3306
+    volumes:
+      - /home/nyot/others/dockerfile-collection/mysql/single-mysql/dbdata:/var/lib/mysql
+      - /home/nyot/others/dockerfile-collection/mysql/single-mysql/my.cnf:/etc/mysql/my.cnf
